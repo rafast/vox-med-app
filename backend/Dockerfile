@@ -2,16 +2,29 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj and restore dependencies
-COPY *.csproj ./
+# Copy solution file
+COPY VoxMed.sln ./
+
+# Copy all project files
+COPY VoxMed.Api/*.csproj ./VoxMed.Api/
+COPY VoxMed.Domain/*.csproj ./VoxMed.Domain/
+COPY VoxMed.Application/*.csproj ./VoxMed.Application/
+COPY VoxMed.Infrastructure/*.csproj ./VoxMed.Infrastructure/
+COPY VoxMed.Auth/*.csproj ./VoxMed.Auth/
+
+# Restore dependencies
 RUN dotnet restore
 
-# Copy source code and build
+# Copy source code
 COPY . .
+
+# Build the main API project
+WORKDIR /src/VoxMed.Api
 RUN dotnet build -c Release -o /app/build
 
 # Publish stage
 FROM build AS publish
+WORKDIR /src/VoxMed.Api
 RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
@@ -37,4 +50,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1
 
 # Entry point
-ENTRYPOINT ["dotnet", "VoxMedApi.dll"]
+ENTRYPOINT ["dotnet", "VoxMed.Api.dll"]

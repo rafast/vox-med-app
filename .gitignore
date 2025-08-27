@@ -4,14 +4,46 @@
 # ====================
 
 # =============================================================================
-# BACKEND (.NET 8.0)
+# BACKEND (.NET 8.0 - Multiple API Projects)
 # =============================================================================
 
-# Build results
+# Solution and project build results
 backend/bin/
 backend/obj/
 backend/out/
 backend/TestResults/
+backend/artifacts/
+
+# All API projects build outputs
+backend/**/bin/
+backend/**/obj/
+backend/**/out/
+backend/**/TestResults/
+backend/**/logs/
+backend/**/Logs/
+
+# VoxMed.Auth.Api specific
+backend/VoxMed.Auth.Api/bin/
+backend/VoxMed.Auth.Api/obj/
+backend/VoxMed.Auth.Api/out/
+backend/VoxMed.Auth.Api/logs/
+backend/VoxMed.Auth.Api/Logs/
+
+# VoxMed.Api.* (Clean Architecture) specific
+backend/VoxMed.Api/VoxMed.Api.WebApi/bin/
+backend/VoxMed.Api/VoxMed.Api.WebApi/obj/
+backend/VoxMed.Api/VoxMed.Api.WebApi/out/
+backend/VoxMed.Api/VoxMed.Api.WebApi/logs/
+backend/VoxMed.Api/VoxMed.Api.WebApi/Logs/
+
+backend/VoxMed.Api/VoxMed.Api.Domain/bin/
+backend/VoxMed.Api/VoxMed.Api.Domain/obj/
+
+backend/VoxMed.Api/VoxMed.Api.Application/bin/
+backend/VoxMed.Api/VoxMed.Api.Application/obj/
+
+backend/VoxMed.Api/VoxMed.Api.Infrastructure/bin/
+backend/VoxMed.Api/VoxMed.Api.Infrastructure/obj/
 
 # User-specific files
 backend/*.rsuser
@@ -19,12 +51,19 @@ backend/*.suo
 backend/*.user
 backend/*.userosscache
 backend/*.sln.docstates
+backend/**/*.rsuser
+backend/**/*.suo
+backend/**/*.user
+backend/**/*.userosscache
+backend/**/*.sln.docstates
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 backend/*.userprefs
+backend/**/*.userprefs
 
 # Mono auto generated files
 backend/mono_crash.*
+backend/**/mono_crash.*
 
 # Build results
 backend/[Dd]ebug/
@@ -42,24 +81,49 @@ backend/[Oo]bj/
 backend/[Ll]og/
 backend/[Ll]ogs/
 
+# Same patterns for all sub-projects
+backend/**/[Dd]ebug/
+backend/**/[Dd]ebugPublic/
+backend/**/[Rr]elease/
+backend/**/[Rr]eleases/
+backend/**/x64/
+backend/**/x86/
+backend/**/[Ww][Ii][Nn]32/
+backend/**/[Aa][Rr][Mm]/
+backend/**/[Aa][Rr][Mm]64/
+backend/**/bld/
+backend/**/[Bb]in/
+backend/**/[Oo]bj/
+backend/**/[Ll]og/
+backend/**/[Ll]ogs/
+
 # Visual Studio 2015/2017 cache/options directory
 backend/.vs/
+backend/**/.vs/
 
 # MSTest test results
 backend/TestResults/
+backend/**/TestResults/
 
 # NUnit
 backend/*.VisualState.xml
 backend/TestResult.xml
 backend/nunit-*.xml
+backend/**/*.VisualState.xml
+backend/**/TestResult.xml
+backend/**/nunit-*.xml
 
 # .NET Core
 backend/project.lock.json
 backend/project.fragment.lock.json
 backend/artifacts/
+backend/**/project.lock.json
+backend/**/project.fragment.lock.json
+backend/**/artifacts/
 
 # StyleCop
 backend/StyleCopReport.xml
+backend/**/StyleCopReport.xml
 
 # Files built by Visual Studio
 backend/*_i.c
@@ -90,6 +154,54 @@ backend/.builds
 backend/*.pidb
 backend/*.svclog
 backend/*.scc
+
+# Same patterns for all sub-projects
+backend/**/*_i.c
+backend/**/*_p.c
+backend/**/*_h.h
+backend/**/*.ilk
+backend/**/*.meta
+backend/**/*.obj
+backend/**/*.iobj
+backend/**/*.pch
+backend/**/*.pdb
+backend/**/*.ipdb
+backend/**/*.pgc
+backend/**/*.pgd
+backend/**/*.rsp
+backend/**/*.sbr
+backend/**/*.tlb
+backend/**/*.tli
+backend/**/*.tlh
+backend/**/*.tmp
+backend/**/*.tmp_proj
+backend/**/*_wpftmp.csproj
+backend/**/*.log
+backend/**/*.tlog
+backend/**/*.vspscc
+backend/**/*.vssscc
+backend/**/.builds
+backend/**/*.pidb
+backend/**/*.svclog
+backend/**/*.scc
+
+# Entity Framework Migrations (keep structure, ignore data)
+backend/**/Migrations/
+backend/VoxMed.Auth.Api/Migrations/
+backend/VoxMed.Api/VoxMed.Api.Infrastructure/Migrations/
+
+# ASP.NET Core
+backend/**/wwwroot/dist/
+backend/**/wwwroot/lib/
+backend/**/*.runtimeconfig.json
+backend/**/*.deps.json
+
+# IIS Express
+backend/**/iisexpress.config
+
+# JetBrains Rider
+backend/.idea/
+backend/**/.idea/
 
 # =============================================================================
 # FRONTEND (Vue.js + TypeScript)
@@ -215,13 +327,29 @@ docker-volumes/
 .env.production.local
 .env.staging
 
-# Configuration files with secrets
+# Configuration files with secrets (keep templates, ignore actual config)
 appsettings.Development.json
 appsettings.Production.json
 appsettings.Staging.json
+
+# Backend configuration files for all API projects
 backend/appsettings.Development.json
 backend/appsettings.Production.json
 backend/appsettings.Staging.json
+
+# VoxMed.Auth.Api configuration
+backend/VoxMed.Auth.Api/appsettings.Development.json
+backend/VoxMed.Auth.Api/appsettings.Production.json
+backend/VoxMed.Auth.Api/appsettings.Staging.json
+
+# VoxMed.Api.WebApi configuration
+backend/VoxMed.Api/VoxMed.Api.WebApi/appsettings.Development.json
+backend/VoxMed.Api/VoxMed.Api.WebApi/appsettings.Production.json
+backend/VoxMed.Api/VoxMed.Api.WebApi/appsettings.Staging.json
+
+# Keep base appsettings.json for structure reference
+!backend/VoxMed.Auth.Api/appsettings.json
+!backend/VoxMed.Api/VoxMed.Api.WebApi/appsettings.json
 
 # Secret files
 secrets/
@@ -229,6 +357,19 @@ secrets/
 *.pem
 *.p12
 *.pfx
+
+# JWT secrets
+backend/**/jwt-secret.txt
+backend/**/jwtsecret.txt
+backend/**/*.jwt
+
+# Database connection strings (when stored in separate files)
+backend/**/connectionstrings.json
+backend/**/database.config
+
+# API keys and sensitive configuration
+backend/**/apikeys.json
+backend/**/secrets.json
 
 # =============================================================================
 # IDE & EDITORS
@@ -348,6 +489,26 @@ yarn.lock
 # pnpm
 pnpm-lock.yaml
 
+# NuGet
+*.nupkg
+*.snupkg
+# NuGet Symbol Packages
+*.symbols.nupkg
+# NuGet packages folder
+backend/packages/
+backend/**/packages/
+
+# .NET CLI tools
+backend/.dotnet/
+backend/**/.dotnet/
+
+# Paket dependency manager
+backend/.paket/
+backend/**/paket-files/
+
+# FAKE - F# Make
+backend/.fake/
+
 # =============================================================================
 # TESTING
 # =============================================================================
@@ -364,6 +525,28 @@ htmlcov/
 .nox/
 .pytest_cache/
 cover/
+
+# .NET Test results
+backend/**/TestResults/
+backend/**/*.trx
+backend/**/*.coverage
+backend/**/*.coveragexml
+
+# xUnit
+backend/**/xunit-results.xml
+
+# NUnit
+backend/**/TestResult.xml
+backend/**/test-results.xml
+
+# MSTest
+backend/**/*.testrunconfig
+backend/**/*.testsettings
+
+# Code coverage reports
+backend/**/coverage.opencover.xml
+backend/**/coverage.cobertura.xml
+backend/**/codecoverage/
 
 # =============================================================================
 # DOCUMENTATION
@@ -389,3 +572,35 @@ docs/build/
 
 # System files
 .htaccess
+
+# Medical application specific
+# Patient data exports (should never be committed)
+backend/**/exports/patient-data/
+backend/**/exports/medical-records/
+backend/**/uploads/patient-files/
+backend/**/temp/medical-data/
+
+# Audit logs with sensitive data
+backend/**/audit-logs/
+backend/**/compliance-logs/
+
+# Certificate stores
+backend/**/certificates/
+backend/**/certs/
+
+# Medical image cache
+backend/**/medical-images/cache/
+backend/**/dicom-cache/
+
+# Temporary medical document processing
+backend/**/temp-medical-docs/
+backend/**/processing/
+
+# Development seeds with fake patient data
+backend/**/seeds/patient-data/
+backend/**/seeds/medical-records/
+
+# Performance profiling results
+backend/**/*.speedscope
+backend/**/*.perfview
+backend/**/*.diagsession

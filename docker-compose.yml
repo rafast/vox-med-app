@@ -8,13 +8,17 @@ services:
       dockerfile: Dockerfile
     container_name: voxmed-api
     ports:
-      - "5000:8080"
+      - "8080:8080"
       - "5001:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080;https://+:8081
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DefaultConnection=Host=database;Port=5432;Database=voxmeddb;Username=voxmed;Password=VoxMed@2025!
+      - JwtSettings__SecretKey=VoxMedAuthenticationSecretKeyForJWTTokenGeneration123456789
+      - JwtSettings__Issuer=VoxMedAPI
+      - JwtSettings__Audience=VoxMedApp
+      - JwtSettings__ExpirationInHours=24
     depends_on:
       database:
         condition: service_healthy
@@ -23,6 +27,11 @@ services:
     volumes:
       - ./backend:/app/source
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Frontend (Vue.js)
   frontend:
@@ -35,12 +44,15 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - VITE_API_BASE_URL=http://localhost:5000
+      - VITE_API_BASE_URL=http://localhost:8080
+      - VITE_AUTH_ENDPOINT=/api/auth/login
+      - VITE_APP_NAME=VoxMed
     volumes:
       - ./frontend:/app
       - /app/node_modules
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - voxmed-network
     restart: unless-stopped

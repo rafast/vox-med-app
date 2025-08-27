@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 // API base URL from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
 // Types for authentication (matching backend DTOs)
 export interface User {
@@ -96,12 +96,10 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('voxmed_token', data.token)
       localStorage.setItem('voxmed_refresh_token', data.refreshToken)
       localStorage.setItem('voxmed_user', JSON.stringify(data.user))
-      
-      console.log('Login successful for user:', data.user.email)
     } catch (error: any) {
       console.error('Login error:', error)
       error.value = error.message || 'Login failed'
-      throw error
+      throw new Error(error.message || 'Login failed')
     } finally {
       isLoading.value = false
     }
@@ -130,13 +128,55 @@ export const useAuthStore = defineStore('auth', () => {
       
       // Clear storage
       localStorage.removeItem('voxmed_token')
-      localStorage.removeItem('voxmed_refresh_token')
-      localStorage.removeItem('voxmed_user')
-      
-      console.log('User logged out')
-    }
+    localStorage.removeItem('voxmed_refresh_token')
+    localStorage.removeItem('voxmed_user')
+    sessionStorage.removeItem('voxmed_token')
+    sessionStorage.removeItem('voxmed_refresh_token')
+    sessionStorage.removeItem('voxmed_user')
   }
 
+  const restoreSession = (): boolean => {
+    try {
+      // Try localStorage first (remember me)
+      let storedToken = localStorage.getItem('voxmed_token')
+      let storedUser = localStorage.getItem('voxmed_user')
+      let storedRefreshToken = localStorage.getItem('voxmed_refresh_token')
+
+      // Fallback to sessionStorage
+      if (!storedToken) {
+        storedToken = sessionStorage.getItem('voxmed_token')
+        storedUser = sessionStorage.getItem('voxmed_user')
+        storedRefreshToken = sessionStorage.getItem('voxmed_refresh_token')
+      }
+
+      if (storedToken && storedUser) {
+        token.value = storedToken
+        refreshToken.value = storedRefreshToken
+        user.value = JSON.parse(storedUser)
+        return true
+      }
+    } catch (error) {
+      console.error('Error restoring session:', error)
+      logout() // Clear any corrupted data
+    }
+    
+    return false
+  }
+
+  const refreshAuthToken = async (): Promise<boolean> => {
+    if (!refreshToken.value) return false
+
+    try {
+      // TODO: Replace with actual API call
+      const response = await mockRefreshToken(refreshToken.value)
+      
+      token.value = response.token
+      
+      // Update stored token
+      if (localStorage.getItem('voxmed_token')) {
+        localStorage.setItem('voxmed_token', response.token)
+      } else {
+        sessionStorage.setItem('voxmed_token', response.token)
   const restoreSession = (): boolean => {
     try {
       const storedToken = localStorage.getItem('voxmed_token')
@@ -147,7 +187,6 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = storedToken
         refreshToken.value = storedRefreshToken
         user.value = JSON.parse(storedUser)
-        console.log('Session restored for user:', user.value?.email)
         return true
       }
       

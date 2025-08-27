@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 // API base URL from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
 // Types for authentication (matching backend DTOs)
 export interface User {

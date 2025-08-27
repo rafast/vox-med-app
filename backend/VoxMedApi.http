@@ -1,6 +1,0 @@
-@VoxMedApi_HostAddress = http://localhost:5148
-
-GET {{VoxMedApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
