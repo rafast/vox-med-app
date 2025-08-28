@@ -69,12 +69,18 @@
         <div class="actions-section">
           <h2>Quick Actions</h2>
           <div class="action-buttons">
-            <button class="action-button primary">
+            <button 
+              @click="router.push('/schedules')"
+              class="action-button primary">
+              <span class="action-icon">📅</span>
+              Manage Schedules
+            </button>
+            <button class="action-button secondary">
               <span class="action-icon">👤</span>
               New Patient
             </button>
             <button class="action-button secondary">
-              <span class="action-icon">📅</span>
+              <span class="action-icon">�</span>
               Schedule Appointment
             </button>
             <button class="action-button secondary">

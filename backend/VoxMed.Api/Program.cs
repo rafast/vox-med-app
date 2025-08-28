@@ -1,9 +1,16 @@
 using VoxMed.Auth.Extensions;
+using VoxMed.Application.Interfaces.Repositories;
+using VoxMed.Infrastructure.Repositories;
+using VoxMed.Application.Mappings;
+using VoxMed.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(Program).Assembly)
+    .AddControllersAsServices();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -41,12 +48,22 @@ builder.Services.AddSwaggerGen(c =>
 // Add VoxMed Authentication services
 builder.Services.AddVoxMedAuth(builder.Configuration);
 
+// Add Main ApplicationDbContext (for scheduling features)
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add AutoMapper
+builder.Services.AddAutoMapper(typeof(DoctorScheduleMappingProfile));
+
+// Add Repository services
+builder.Services.AddScoped<IDoctorScheduleRepository, DoctorScheduleRepository>();
+
 // Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "https://localhost:3000")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:5174", "https://localhost:3000")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
