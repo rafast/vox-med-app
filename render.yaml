@@ -57,8 +57,5 @@ services:
       - key: PGDATA
         value: /var/lib/postgresql/data/pgdata
   # Render does not support 'ports' field
-    disk:
-      name: voxmed-db-data
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1
-    healthCheckPath: /docker-entrypoint-initdb.d
+  # Disk removed for free tier compatibility
+  # healthCheckPath removed for pserv compatibility
