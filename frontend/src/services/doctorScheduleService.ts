@@ -10,7 +10,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080
 
 // Helper function to get auth token
 function getAuthToken(): string | null {
-  return localStorage.getItem('authToken')
+  return localStorage.getItem('voxmed_token')
 }
 
 // Helper function to create fetch options

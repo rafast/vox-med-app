@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard" v-if="authStore.isDoctor">
     <header class="dashboard-header">
       <div class="header-content">
         <h1>VoxMed Dashboard</h1>
@@ -75,6 +75,12 @@
               <span class="action-icon">📅</span>
               Manage Schedules
             </button>
+            <button 
+              @click="router.push('/patients')"
+              class="action-button primary">
+              <span class="action-icon">🏥</span>
+              Patient Dashboard
+            </button>
             <button class="action-button secondary">
               <span class="action-icon">👤</span>
               New Patient
@@ -105,6 +111,17 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const authStore = useAuthStore()
+
+// Redirect patients to their dashboard
+onMounted(async () => {
+  if (authStore.isPatient) {
+    router.push('/patients')
+    return
+  }
+  
+  // Load dashboard data only for doctors/admin
+  await loadDashboardData()
+})
 
 // Dashboard stats
 const stats = ref({

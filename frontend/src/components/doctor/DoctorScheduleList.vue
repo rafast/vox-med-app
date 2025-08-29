@@ -154,14 +154,11 @@
 </template>
 
 <script setup lang="ts">
-import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useDoctorScheduleStore } from '@/stores/doctorSchedule'
 import type { DoctorSchedule } from '@/types/doctorSchedule'
 import { DAYS_OF_WEEK } from '@/types/doctorSchedule'
 import { onMounted, onUnmounted, ref } from 'vue'
-import ScheduleFormModal from './ScheduleFormModal.vue'
-
 // Props
 interface Props {
   doctorId?: string

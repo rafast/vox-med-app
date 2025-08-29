@@ -53,10 +53,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add AutoMapper
-builder.Services.AddAutoMapper(typeof(DoctorScheduleMappingProfile));
+builder.Services.AddAutoMapper(typeof(DoctorScheduleMappingProfile), typeof(AppointmentMappingProfile));
+
+// Add MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(VoxMed.Application.Handlers.Appointments.CreateAppointmentHandler).Assembly));
 
 // Add Repository services
 builder.Services.AddScoped<IDoctorScheduleRepository, DoctorScheduleRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -73,6 +77,10 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+
+// Register global exception handling middleware
+app.UseMiddleware<VoxMed.Api.Middleware.ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

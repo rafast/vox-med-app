@@ -11,7 +11,7 @@ export interface User {
   firstName: string
   lastName: string
   fullName: string
-  userType: 'Doctor' | 'Patient'
+  userType: number | 'Doctor' | 'Patient' // Handle both numeric and string types
   userTypeString: string
   isActive: boolean
   // Doctor-specific properties
@@ -56,10 +56,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!user.value)
-  const userRole = computed(() => user.value?.userType || '')
+  const userRole = computed(() => user.value?.userTypeString || '')
   const userName = computed(() => user.value?.fullName || '')
-  const isDoctor = computed(() => user.value?.userType === 'Doctor')
-  const isPatient = computed(() => user.value?.userType === 'Patient')
+  const isDoctor = computed(() => user.value?.userTypeString === 'Doctor')
+  const isPatient = computed(() => user.value?.userTypeString === 'Patient')
 
   // Actions
   const login = async (credentials: LoginCredentials): Promise<void> => {
