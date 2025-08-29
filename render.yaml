@@ -41,21 +41,21 @@ services:
         value: VoxMed
   # Render does not support 'ports' or 'dependsOn' fields
 
-  - type: pserv
-    name: voxmed-database
-    env: docker
-    plan: free
-    dockerfilePath: database/Dockerfile
-    autoDeploy: true
-    envVars:
-      - key: POSTGRES_DB
-        value: voxmeddb
-      - key: POSTGRES_USER
-        value: voxmed
-      - key: POSTGRES_PASSWORD
-        value: VoxMed@2025!
-      - key: PGDATA
-        value: /var/lib/postgresql/data/pgdata
+  # - type: pserv
+  #   name: voxmed-database
+  #   env: docker
+  #   plan: free
+  #   dockerfilePath: database/Dockerfile
+  #   autoDeploy: true
+  #   envVars:
+  #     - key: POSTGRES_DB
+  #       value: voxmeddb
+  #     - key: POSTGRES_USER
+  #       value: voxmed
+  #     - key: POSTGRES_PASSWORD
+  #       value: VoxMed@2025!
+  #     - key: PGDATA
+  #       value: /var/lib/postgresql/data/pgdata
   # Render does not support 'ports' field
   # Disk removed for free tier compatibility
   # healthCheckPath removed for pserv compatibility
