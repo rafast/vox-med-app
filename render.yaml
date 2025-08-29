@@ -13,7 +13,7 @@ services:
       - key: ASPNETCORE_HTTPS_PORTS
         value: 8081
       - key: ConnectionStrings__DefaultConnection
-        value: Host=voxmed-database;Port=5432;Database=voxmeddb;Username=voxmed;Password=VoxMed@2025!
+        value: Host=ep-cold-band-aeafaabt-pooler.c-2.us-east-2.aws.neon.tech;Port=5432;Database=neondb;Username=neondb_owner;Password=npg_mvn8FaLJWlz5;SslMode=Require;ChannelBinding=Require
       - key: JwtSettings__SecretKey
         value: VoxMedAuthenticationSecretKeyForJWTTokenGeneration123456789
       - key: JwtSettings__Issuer
