@@ -22,11 +22,7 @@ services:
         value: VoxMedApp
       - key: JwtSettings__ExpirationInHours
         value: 24
-    ports:
-      - 8080
-      - 8081
-    dependsOn:
-      - voxmed-database
+  # Render does not support 'ports' or 'dependsOn' fields
 
   - type: web
     name: voxmed-frontend
@@ -43,16 +39,13 @@ services:
         value: /api/auth/login
       - key: VITE_APP_NAME
         value: VoxMed
-    ports:
-      - 3000
-    dependsOn:
-      - voxmed-backend
+  # Render does not support 'ports' or 'dependsOn' fields
 
   - type: pserv
     name: voxmed-database
     env: docker
     plan: free
-    image: postgres:15-alpine
+    dockerfilePath: database/Dockerfile
     autoDeploy: true
     envVars:
       - key: POSTGRES_DB
@@ -63,8 +56,7 @@ services:
         value: VoxMed@2025!
       - key: PGDATA
         value: /var/lib/postgresql/data/pgdata
-    ports:
-      - 5432
+  # Render does not support 'ports' field
     disk:
       name: voxmed-db-data
       mountPath: /var/lib/postgresql/data
