@@ -82,7 +82,7 @@
               </div>
               <div class="activity-content">
                 <div class="appointment-header">
-                  <h4>{{ formatAppointmentType(appointment.type) }}</h4>
+                  <h4>{{ AppointmentType[appointment.type] }}</h4>
                   <span class="appointment-status" :class="getStatusBadgeClass(appointment.status)">
                     {{ formatStatus(appointment.status) }}
                   </span>
@@ -206,8 +206,14 @@
             <label for="doctorId">Doctor *</label>
             <select id="doctorId" v-model="appointmentForm.doctorId" required>
               <option value="">Select a doctor</option>
-              <option value="451d1594-3602-4227-a8c8-bcb9009a2896">Dr. John Smith - General Medicine</option>
-              <!-- TODO: Load doctors from API -->
+              <template v-if="doctors.length > 0">
+                <option v-for="doctor in doctors" :key="doctor.id" :value="doctor.id">
+                  {{ doctor.name }}<span v-if="doctor.specialty"> - {{ doctor.specialty }}</span>
+                </option>
+              </template>
+              <template v-else>
+                <option disabled value="">No doctors available</option>
+              </template>
             </select>
           </div>
 
@@ -253,9 +259,11 @@
 <script setup lang="ts">
 import { appointmentsApi } from '@/services/appointments'
 import { useAuthStore } from '@/stores/auth'
-import type { Appointment, AppointmentType } from '@/types/appointment'
+import { AppointmentType, type Appointment } from '@/types/appointment'
+import axios from 'axios'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+const apiBaseUrl: string = import.meta.env.VITE_API_BASE_URL
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -267,6 +275,20 @@ const showCreateModal = ref(false)
 const showEditModal = ref(false)
 const selectedAppointment = ref<Appointment | null>(null)
 const isSubmitting = ref(false)
+
+// Doctor list state
+const doctors = ref<Array<{ id: string, name: string, specialty?: string }>>([])
+
+async function loadDoctors() {
+  try {
+    // Replace with your actual API endpoint if different
+    const response = await axios.get(`${apiBaseUrl}/api/Doctors`)
+    doctors.value = response.data
+  } catch (error) {
+    console.error('Failed to load doctors:', error)
+    doctors.value = []
+  }
+}
 
 // Appointment form data
 const appointmentForm = ref({
@@ -356,30 +378,23 @@ function formatDateTime(dateTime: string): string {
   })
 }
 
-function formatAppointmentType(type: string): string {
-  const typeMap: Record<number | string, string> = {
-    0: 'Consultation',
-    1: 'Follow-up',
-    2: 'Emergency',
-    3: 'Procedure',
-    4: 'Surgery',
-    5: 'Check-up',
-    6: 'Vaccination',
-    7: 'Lab Work',
-    8: 'Imaging',
-    9: 'Therapy',
-    'Consultation': 'Consultation',
-    'FollowUp': 'Follow-up',
-    'Emergency': 'Emergency',
-    'Procedure': 'Procedure',
-    'Surgery': 'Surgery',
-    'Checkup': 'Check-up',
-    'Vaccination': 'Vaccination',
-    'LabWork': 'Lab Work',
-    'Imaging': 'Imaging',
-    'Therapy': 'Therapy'
-  }
-  return typeMap[type] || String(type)
+function formatAppointmentType(type: AppointmentType): number {
+  // If type is a number, return as is
+  if (typeof type === 'number') return type;
+  // If type is a string, map to int
+  const typeMap: Record<string, number> = {
+    'Consultation': 0,
+    'FollowUp': 1,
+    'Emergency': 2,
+    'Procedure': 3,
+    'Surgery': 4,
+    'Checkup': 5,
+    'Vaccination': 6,
+    'LabWork': 7,
+    'Imaging': 8,
+    'Therapy': 9
+  };
+  return typeMap[type] ?? 0;
 }
 
 function getStatusClass(status: string): string {
@@ -449,7 +464,7 @@ async function cancelAppointment(appointment: Appointment) {
 async function saveAppointment() {
   try {
     isSubmitting.value = true
-    
+
     const patientId = authStore.user?.id
     if (!patientId) {
       console.error('No patient ID found')
@@ -462,13 +477,12 @@ async function saveAppointment() {
       return
     }
 
-    // Use type as AppointmentType (string) for API
     if (showEditModal.value && selectedAppointment.value) {
       // Update existing appointment
       const updateData = {
         appointmentDateTime: appointmentForm.value.appointmentDateTime + 'Z', // Add UTC timezone
         durationMinutes: Number(appointmentForm.value.durationMinutes),
-        type: appointmentForm.value.type,
+        type: appointmentForm.value.type as AppointmentType,
         reason: appointmentForm.value.reason || undefined,
         symptoms: appointmentForm.value.symptoms || undefined
       }
@@ -480,12 +494,23 @@ async function saveAppointment() {
         doctorId: appointmentForm.value.doctorId,
         appointmentDateTime: appointmentForm.value.appointmentDateTime + 'Z', // Add UTC timezone
         durationMinutes: Number(appointmentForm.value.durationMinutes),
-        type: appointmentForm.value.type,
+        type: formatAppointmentType(appointmentForm.value.type),
         reason: appointmentForm.value.reason || undefined,
         symptoms: appointmentForm.value.symptoms || undefined,
         isOnline: appointmentForm.value.isOnline
       }
-      await appointmentsApi.create(createData)
+      try {
+        await appointmentsApi.create(createData)
+      } catch (error: any) {         
+        const errorMessage = typeof error === 'string' ? error : (error?.message || JSON.stringify(error));
+        const message = extractApiErrorMessage(errorMessage);
+        if (errorMessage.includes('400')) {
+          alert('Failed to create appointment. Error:' + message);
+          return;
+        }        
+          alert('Failed to create appointment. Please try again.')
+        return;
+      }
     }
 
     // Reset form
@@ -494,10 +519,24 @@ async function saveAppointment() {
     await loadAppointments() // Refresh the list
   } catch (error) {
     console.error('Failed to save appointment:', error)
-    // TODO: Show error toast
+    alert('Failed to save appointment. Please try again.' + error)
   } finally {
     isSubmitting.value = false
   }
+}
+
+function extractApiErrorMessage(errorString: string): string | null {
+  // Match the JSON part after the dash
+  const match = errorString.match(/-\s*(\{.*\})$/);
+  if (match && match[1]) {
+    try {
+      const errorObj = JSON.parse(match[1]);
+      return errorObj.error || null;
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }
 
 function resetForm() {
@@ -524,14 +563,15 @@ async function handleSave() {
   await loadAppointments() // Refresh the list
 }
 
-function handleLogout() {
-  authStore.logout()
+async function handleLogout() {
+  await authStore.logout()
   router.push('/login')
 }
 
 // Lifecycle
 onMounted(() => {
   loadAppointments()
+  loadDoctors()
 })
 </script>
 

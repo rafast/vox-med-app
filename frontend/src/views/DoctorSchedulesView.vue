@@ -223,14 +223,17 @@
       </div>
     </main>
 
-    <!-- Create/Edit Form Modal -->
-    <ScheduleFormModal
-      v-if="showCreateForm || editingSchedule"
-      :schedule="editingSchedule"
-      :doctor-id="doctorId"
-      @close="closeForm"
-      @saved="handleScheduleSaved"
-    />
+    <!-- Create/Edit Form Modal (custom overlay) -->
+    <div v-if="showCreateForm || editingSchedule" class="modal-overlay" @click="closeForm">
+      <div class="modal-content" @click.stop>
+        <ScheduleFormModal
+          :schedule="editingSchedule"
+          :doctor-id="doctorId"
+          @close="closeForm"
+          @saved="handleScheduleSaved"
+        />
+      </div>
+    </div>
 
     <!-- Delete Confirmation Modal -->
     <ConfirmDialog
@@ -393,6 +396,31 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+
+/* Modal styles (same as PatientDashboardView) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
 .doctor-schedules-page {
   min-height: 100vh;
   background-color: #f7fafc;

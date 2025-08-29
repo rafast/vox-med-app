@@ -24,7 +24,7 @@ export interface CreateAppointmentRequest {
   scheduleId?: string
   appointmentDateTime: string
   durationMinutes: number
-  type: AppointmentType
+  type: Number
   reason?: string
   notes?: string
   symptoms?: string
@@ -46,16 +46,16 @@ export interface UpdateAppointmentRequest {
 }
 
 export enum AppointmentType {
-  Consultation = 'Consultation',
-  FollowUp = 'FollowUp',
-  Emergency = 'Emergency',
-  Procedure = 'Procedure',
-  Surgery = 'Surgery',
-  Checkup = 'Checkup',
-  Vaccination = 'Vaccination',
-  LabWork = 'LabWork',
-  Imaging = 'Imaging',
-  Therapy = 'Therapy'
+  Consultation = 0,
+  FollowUp = 1,
+  Emergency = 2,
+  Procedure = 3,
+  Surgery = 4,
+  Checkup = 5,
+  Vaccination = 6,
+  LabWork = 7,
+  Imaging = 8,
+  Therapy = 9
 }
 
 export enum AppointmentStatus {

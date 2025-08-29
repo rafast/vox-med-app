@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for frontend-long-feather-9582 on 2025-08-29T01:41:15-03:00
+# fly.toml app configuration file generated for frontend-restless-violet-674 on 2025-08-29T03:16:31-03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'frontend-long-feather-9582'
+app = 'frontend-restless-violet-674'
 primary_region = 'gig'
 
 [build]

@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for backend-ancient-silence-7857 on 2025-08-29T02:45:47-03:00
+# fly.toml app configuration file generated for backend-delicate-wave-8071 on 2025-08-29T03:12:41-03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'backend-ancient-silence-7857'
+app = 'backend-delicate-wave-8071'
 primary_region = 'gig'
 
 [build]

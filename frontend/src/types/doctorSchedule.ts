@@ -58,3 +58,8 @@ export interface PaginatedResponse<T> {
   page: number
   pageSize: number
 }
+
+
+export interface ApiError {
+  error: string;
+}

@@ -82,7 +82,7 @@
               </div>
               <div class="activity-content">
                 <div class="appointment-header">
-                  <h4>{{ formatAppointmentType(appointment.type) }}</h4>
+                  <h4>{{ formatAppointmentType(appointment.type.toString()) }}</h4>
                   <span class="appointment-status" :class="getStatusBadgeClass(appointment.status)">
                     {{ appointment.status }}
                   </span>
