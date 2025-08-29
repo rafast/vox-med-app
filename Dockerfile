@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-backend
 WORKDIR /app
 COPY backend/ ./backend/
 WORKDIR /app/backend
-RUN dotnet publish VoxMedApi.csproj -c Release -o /app/publish
+RUN dotnet publish VoxMed.sln -c Release -o /app/publish
 
 # Stage 2: Build frontend (Vue.js)
 FROM node:20-alpine AS build-frontend
