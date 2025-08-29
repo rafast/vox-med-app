@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'backend-nameless-surf-6173'
+app = 'backend-old-butterfly-6580'
 primary_region = 'gig'
 
 [build]
