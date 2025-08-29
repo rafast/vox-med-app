@@ -3,8 +3,7 @@ services:
     name: voxmed-backend
     env: docker
     plan: free
-    dockerfilePath: backend/Dockerfile
-    buildContext: backend
+  dockerfilePath: backend/Dockerfile
     autoDeploy: true
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
@@ -33,8 +32,7 @@ services:
     name: voxmed-frontend
     env: docker
     plan: free
-    dockerfilePath: frontend/Dockerfile
-    buildContext: frontend
+  dockerfilePath: frontend/Dockerfile
     autoDeploy: true
     envVars:
       - key: NODE_ENV
