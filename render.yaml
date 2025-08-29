@@ -1,0 +1,74 @@
+services:
+  - type: web
+    name: voxmed-backend
+    env: docker
+    plan: free
+    dockerfilePath: backend/Dockerfile
+    buildContext: backend
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ASPNETCORE_URLS
+        value: http://+:8080;https://+:8081
+      - key: ASPNETCORE_HTTPS_PORTS
+        value: 8081
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=voxmed-database;Port=5432;Database=voxmeddb;Username=voxmed;Password=VoxMed@2025!
+      - key: JwtSettings__SecretKey
+        value: VoxMedAuthenticationSecretKeyForJWTTokenGeneration123456789
+      - key: JwtSettings__Issuer
+        value: VoxMedAPI
+      - key: JwtSettings__Audience
+        value: VoxMedApp
+      - key: JwtSettings__ExpirationInHours
+        value: 24
+    ports:
+      - 8080
+      - 8081
+    dependsOn:
+      - voxmed-database
+
+  - type: web
+    name: voxmed-frontend
+    env: docker
+    plan: free
+    dockerfilePath: frontend/Dockerfile
+    buildContext: frontend
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: development
+      - key: VITE_API_BASE_URL
+        value: http://voxmed-backend:8080
+      - key: VITE_AUTH_ENDPOINT
+        value: /api/auth/login
+      - key: VITE_APP_NAME
+        value: VoxMed
+    ports:
+      - 3000
+    dependsOn:
+      - voxmed-backend
+
+  - type: pserv
+    name: voxmed-database
+    env: docker
+    plan: free
+    image: postgres:15-alpine
+    autoDeploy: true
+    envVars:
+      - key: POSTGRES_DB
+        value: voxmeddb
+      - key: POSTGRES_USER
+        value: voxmed
+      - key: POSTGRES_PASSWORD
+        value: VoxMed@2025!
+      - key: PGDATA
+        value: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5432
+    disk:
+      name: voxmed-db-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
+    healthCheckPath: /docker-entrypoint-initdb.d
