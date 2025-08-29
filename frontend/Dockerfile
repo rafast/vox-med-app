@@ -46,7 +46,7 @@ RUN rm -rf ./*
 COPY --from=build /app/dist .
 
 # Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
 EXPOSE 80
