@@ -68,9 +68,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:5174", "https://localhost:3000")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+          .AllowCredentials();
+      // Add deployed frontend Fly.io URL
+      policy.WithOrigins("https://frontend-long-feather-9582.fly.dev");
     });
 });
 
